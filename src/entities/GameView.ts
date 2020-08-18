@@ -1,7 +1,8 @@
-import { Bee, BeeType } from "../models/Bee";
 import { SwarmCapacity } from "../models/SwarmCapacity";
+import { BeeType, Bee } from "../models/Bee";
 
-export class DomService {
+export class GameView {
+    private introElement: HTMLElement;
     private statusBoardElement: HTMLElement;
     private notificationsElement: HTMLElement;
     private hitElement: HTMLElement;
@@ -9,6 +10,7 @@ export class DomService {
     private gameOverElement: HTMLElement;
 
     constructor() {
+        this.introElement = document.querySelector('.intro');
         this.statusBoardElement = document.querySelector('.status-board');
         this.notificationsElement = document.querySelector('.notifications');
         this.hitElement = document.getElementById('hit');
@@ -16,15 +18,14 @@ export class DomService {
         this.gameOverElement = document.querySelector('.game-over');
     }
 
-    bindStartAction(handler: () => void) {
+    bindStartAction(handler: (playerName: string) => void) {
         const startButton = document.getElementById('start-game');
         startButton.onclick = () => {
             const playerNameInput = document.getElementById('player-name-input');
             const playerNameValue = (<HTMLInputElement>playerNameInput).value;
 
             if (playerNameValue && playerNameValue.trim().length > 2) {
-                const introElement = document.querySelector('.intro');
-                introElement.classList.remove('active');
+                this.introElement.classList.remove('active');
 
                 const playerDetailsElement = document.querySelector('.player');
                 playerDetailsElement.classList.add('active');
@@ -35,7 +36,7 @@ export class DomService {
                 const gameElement = document.querySelector('.game');
                 gameElement.classList.add('active');
 
-                handler();
+                handler(playerNameValue);
             } else {
                 const errorElement = document.getElementById('player-name-error');
                 errorElement.classList.add('active');
@@ -51,7 +52,7 @@ export class DomService {
         this.resetElement.onclick = () => handler();
     }
 
-    startGame(swarmCapacity: SwarmCapacity) {
+    startGame(beesCountByType: any, swarmCapacity: SwarmCapacity) {
         const beeTypesElement = document.querySelector('.bee-types');
         beeTypesElement.innerHTML = '';
 
@@ -63,27 +64,31 @@ export class DomService {
 
         for (let i = 0; i < beeTypes.length; i++) {
             const currentType = beeTypes[i];
-            let currentValue: number;
+            let currentCount: number;
+            let capacity: number;
             const child = document.createElement('li');
 
             switch (currentType) {
                 case BeeType.QUEEN:
-                    currentValue = swarmCapacity.queenCapacity
+                    currentCount = beesCountByType[BeeType.QUEEN];
+                    capacity = swarmCapacity.queenCapacity
                     break;
                 case BeeType.WORKER:
-                    currentValue = swarmCapacity.workersCapacity
+                    currentCount = beesCountByType[BeeType.WORKER];
+                    capacity = swarmCapacity.workersCapacity
                     break;
                 case BeeType.DRONE:
-                    currentValue = swarmCapacity.dronesCapacity
+                    currentCount = beesCountByType[BeeType.DRONE];
+                    capacity = swarmCapacity.dronesCapacity
                     break;
                 default:
-                    currentValue = 0;
+                    capacity = 0;
             }
 
             child.id = currentType.toLowerCase();
             child.innerHTML = `
-                ${currentType}: <span class="count">${currentValue}</span>
-                <span class="separator"></span><span class="capacity">${currentValue}</span>
+                ${currentType}: <span class="count">${currentCount}</span>
+                <span class="separator"></span><span class="capacity">${capacity}</span>
             `;
             beeTypesElement.appendChild(child);
         }

@@ -1,5 +1,5 @@
 import './styles.css';
-import { Game } from './models/Game';
+import { GameController } from './entities/GameController';
 
-const game = new Game();
+const game = new GameController();
 game.initialize();

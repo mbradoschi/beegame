@@ -9,68 +9,50 @@ export class Swarm {
         dronesCapacity: 8
     };
 
-    private onSwarmInitialize: (swarmCapacity: SwarmCapacity) => void;
-    private onSwarmChange: (beeType: BeeType) => void;
-    private onBeeChange: (targetBee: Bee) => void;
-    private onDeadSwarm: () => void;
-
     initialize() {
         this.bees.push(new Queen());
         this.initializeWorkers();
         this.initializeDrones();
-
-        this.onSwarmInitialize(this.swarmCapacity);
     }
 
-    bindOnSwarmInitialize(callback: (swarmCapacity: SwarmCapacity) => void) {
-        this.onSwarmInitialize = callback;
+    getBees() {
+        return this.bees;
     }
 
-    bindOnSwarmChange(callback: (beeType: BeeType) => void) {
-        this.onSwarmChange = callback;
+    setBees(bees: Bee[]) {
+        this.bees = bees;
     }
 
-    bindOnBeeChange(callback: (targetBee: Bee) => void) {
-        this.onBeeChange = callback;
+    getBee(beeIndex: number) {
+        return this.bees[beeIndex];
     }
 
-    bindOnDeadSwarm(callback: () => void) {
-        this.onDeadSwarm = callback;
+    removeBee(beeIndex: number) {
+        this.bees.splice(beeIndex, 1);
     }
 
-    inflictDamage() {
-        if (!this.bees || this.bees.length === 0) {
-            return;
-        }
-
-        const maxIndex = this.bees.length - 1;
-        const targetBeeIndex = Math.floor(Math.random() * maxIndex);
-        
-        this.bees[targetBeeIndex].inflictDamage();
-        this.onBeeChange(this.bees[targetBeeIndex]);
-
-        this.checkSwarmHealth(targetBeeIndex);
+    getSwarmCapacity() {
+        return this.swarmCapacity;
     }
 
-    checkSwarmHealth(targetBeeIndex: number) {
-        if (this.bees[targetBeeIndex].hp <= 0) {
-            this.bees.splice(targetBeeIndex, 1);
-
-            if (this.isTheQueenDead() || !this.bees.length) {
-                this.onDeadSwarm();
-                return;
+    getCountByType() {
+        return this.bees.reduce((accumulator: any, bee: Bee) => {
+            if (accumulator[bee.type]) {
+                accumulator[bee.type] += 1;
+            } else {
+                accumulator[bee.type] = 1;
             }
 
-            this.onSwarmChange(this.bees[targetBeeIndex].type);
-        }
+            return accumulator;
+        }, <any>{});
+    }
+
+    public isTheQueenDead(): boolean {
+        return (this.getQueen() == null || this.getQueen().hp <= 0);
     }
 
     private getQueen(): Bee {
         return this.bees.find(bee => bee.type === BeeType.QUEEN);
-    }
-
-    private isTheQueenDead(): boolean {
-        return (this.getQueen() == null || this.getQueen().hp <= 0);
     }
 
     private initializeWorkers() {
