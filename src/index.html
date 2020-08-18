@@ -9,18 +9,18 @@
     <header>
         <h1 class="title">Bee Game</h1>
         <div class="player">
-            <p>Player name: <span id="player-name"></span></p>
+            <p>Player: <span id="player-name"></span></p>
         </div>
     </header>
 
     <main>
         <div class="intro active">
-            <div>
+            <div class="intro-input">
                 <input id="player-name-input" type="text" placeholder="Player name" required />
-                <p id="player-name-error">Player name is required and must have at least 3 characters</p>
+                <button id="start-game">Start game</button>
             </div>
 
-            <button id="start-game">Start game</button>
+            <p id="player-name-error">Player name is required and must have at least 3 characters</p>
         </div>
 
         <div class="game">
