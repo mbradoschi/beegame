@@ -1,3 +1,31 @@
+.player,
+#player-name-error,
+.game,
+.intro,
+.status-board,
+.notifications,
+.game-over,
+#reset,
+#hit {
+    display: none;
+}
+
+.player.active,
+#player-name-error.active,
+.game.active,
+.intro.active,
+.status-board.active,
+.notifications.active,
+.game-over.active,
+#reset.active,
+#hit.active {
+    display: block;
+}
+
+#player-name-error {
+    color: tomato;
+}
+
 .separator::before {
     content: ' / ';
 }

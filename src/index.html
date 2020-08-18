@@ -14,8 +14,12 @@
     </header>
 
     <main>
-        <div class="intro">
-            <input id="player-name-input" type="text" />
+        <div class="intro active">
+            <div>
+                <input id="player-name-input" type="text" placeholder="Player name" required />
+                <p id="player-name-error">Player name is required and must have at least 3 characters</p>
+            </div>
+
             <button id="start-game">Start game</button>
         </div>
 
@@ -23,12 +27,10 @@
             <div class="status-board">
                 <h3>Alive bees</h3>
 
-                <ul class="bee-types">
-                    <li>Queen <span class="count"></span><span class="separator"></span><span class="capacity"></span></li>
-                    <li>Worker <span class="count"></span><span class="separator"></span><span class="capacity"></span></li>
-                    <li>Drone <span class="count"></span><span class="separator"></span><span class="capacity"></span></li>
-                </ul>
+                <ul class="bee-types"></ul>
             </div>
+
+            <p class="game-over">Game Over</p>
 
             <div class="notifications">
                 <p class="last-hit">
@@ -36,9 +38,8 @@
                     <span id="bee-type"></span>
                     <span class="separator"></span>
                     <span id="bee-damage"></span>
+                    <span> damage</span>
                 </p>
-
-                <p class="game-over">Game Over</p>
             </div>
 
             <div class="actions">
