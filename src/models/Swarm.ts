@@ -27,6 +27,7 @@ export class Swarm {
 
     setBees(bees: Bee[]) {
         this.bees = bees;
+        this.updateSwarmCount(this.bees);
     }
 
     getBee(beeIndex: number): Bee {
@@ -79,6 +80,12 @@ export class Swarm {
         for (let i = 0; i < this.swarmCapacity[BeeType.DRONE]; i++) {
             this.bees.push(new Drone());
             this.swarmCount[BeeType.DRONE] += 1;
+        }
+    }
+
+    private updateSwarmCount(bees: Bee[]) {
+        for (let bee of bees) {
+            this.swarmCount[bee.type] += 1;
         }
     }
 }
