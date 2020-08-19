@@ -1,21 +1,27 @@
 import { Bee, BeeType, Queen, WorkerBee, Drone } from './Bee';
+import { SwarmCount } from './SwarmCount';
 import { SwarmCapacity } from './SwarmCapacity';
 
 export class Swarm {
     private bees: Bee[] = [];
+    private swarmCount: SwarmCount = {
+        [BeeType.QUEEN]: 0,
+        [BeeType.WORKER]: 0,
+        [BeeType.DRONE]: 0
+    };
     private readonly swarmCapacity: SwarmCapacity = {
-        queenCapacity: 1,
-        workersCapacity: 5,
-        dronesCapacity: 8
+        [BeeType.QUEEN]: 1,
+        [BeeType.WORKER]: 5,
+        [BeeType.DRONE]: 8
     };
 
     initialize() {
-        this.bees.push(new Queen());
+        this.initializeQueen();
         this.initializeWorkers();
         this.initializeDrones();
     }
 
-    getBees() {
+    getBees(): Bee[] {
         return this.bees;
     }
 
@@ -23,28 +29,21 @@ export class Swarm {
         this.bees = bees;
     }
 
-    getBee(beeIndex: number) {
+    getBee(beeIndex: number): Bee {
         return this.bees[beeIndex];
     }
 
-    removeBee(beeIndex: number) {
+    removeBee(bee: Bee, beeIndex: number) {
         this.bees.splice(beeIndex, 1);
+        this.swarmCount[bee.type] -= 1;
     }
 
-    getSwarmCapacity() {
+    getSwarmCount(): SwarmCount {
+        return this.swarmCount;
+    }
+
+    getSwarmCapacity(): SwarmCapacity {
         return this.swarmCapacity;
-    }
-
-    getCountByType() {
-        return this.bees.reduce((accumulator: any, bee: Bee) => {
-            if (accumulator[bee.type]) {
-                accumulator[bee.type] += 1;
-            } else {
-                accumulator[bee.type] = 1;
-            }
-
-            return accumulator;
-        }, <any>{});
     }
 
     public isTheQueenDead(): boolean {
@@ -55,15 +54,22 @@ export class Swarm {
         return this.bees.find(bee => bee.type === BeeType.QUEEN);
     }
 
+    private initializeQueen() {
+        this.bees.push(new Queen());
+        this.swarmCount[BeeType.QUEEN] += 1;
+    }
+
     private initializeWorkers() {
-        for (let i = 0; i < this.swarmCapacity.workersCapacity; i++) {
+        for (let i = 0; i < this.swarmCapacity[BeeType.WORKER]; i++) {
             this.bees.push(new WorkerBee());
+            this.swarmCount[BeeType.WORKER] += 1;
         }
     }
 
     private initializeDrones() {
-        for (let i = 0; i < this.swarmCapacity.dronesCapacity; i++) {
+        for (let i = 0; i < this.swarmCapacity[BeeType.DRONE]; i++) {
             this.bees.push(new Drone());
+            this.swarmCount[BeeType.DRONE] += 1;
         }
     }
 }

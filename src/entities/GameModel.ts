@@ -1,50 +1,69 @@
 import { Bee, BeeType } from '../models/Bee';
 import { Swarm } from '../models/Swarm';
-import { SwarmCapacity } from '../models/SwarmCapacity';
 import { StorageService } from '../services/StorageService';
 import { StorageState } from '../models/StorageState';
 
 export class GameModel {
-    private playerName: string = '';
+    private playerName: string;
     private swarm: Swarm = new Swarm();
-    private lastHit: Bee = null;
+    private lastHit: Bee;
 
     private readonly storageService: StorageService = new StorageService();
 
-    private onModelInitialize: (beesCountByType: any, swarmCapacity: SwarmCapacity) => void;
+    private onModelInitialize: (storageState: StorageState) => void;
     private onModelChange: (beeType: BeeType) => void;
     private onBeeChange: (targetBee: Bee) => void;
     private onDeadSwarm: () => void;
 
-    initialize(playerName: string) {
+    constructor() {
         const persistedState = this.storageService.getState();
 
-        if (!persistedState) {
-            this.playerName = playerName;
-            this.swarm.initialize();
-            this.storageService.setState(this.buildStorageState());
-        } else {
-            const { playerName, bees, lastHit } = persistedState;
-            this.playerName = playerName;
-            this.lastHit = lastHit;
-            this.swarm.setBees(bees);
-        }
+        const { playerName, bees, lastHit } = persistedState;
+        this.playerName = playerName;
+        this.lastHit = lastHit;
 
-        this.onModelInitialize(this.swarm.getCountByType(), this.swarm.getSwarmCapacity());
+        if (bees.length > 0) {
+            this.swarm.setBees(bees);
+        } else {
+            this.swarm.initialize();
+        }
+    }
+
+    initialize(playerName: string) {
+        // const persistedState = this.storageService.getState();
+
+        // if (!persistedState) {
+        //     this.playerName = playerName;
+        //     this.swarm.initialize();
+        //     // this.storageService.setState(this.buildStorageState());
+        // } else {
+        //     const { playerName, bees, lastHit } = persistedState;
+        //     this.playerName = playerName;
+        //     this.lastHit = lastHit;
+        //     this.swarm.setBees(bees);
+        // }
+        this.playerName = playerName;
+        this.storageService.setState(this.buildStorageState());
+
+        this.onModelInitialize(this.getStorageState());
     }
 
     reset() {
         this.storageService.removeState();
         this.swarm.setBees([]);
         this.swarm.initialize();
-        this.onModelInitialize(this.swarm.getCountByType(), this.swarm.getSwarmCapacity());
+        this.onModelInitialize(this.getStorageState());
+    }
+
+    getStorageState() {
+        return this.storageService.getState();
     }
 
     hasStorageState() {
-        return (this.storageService.getState() !== null);
+        return (this.playerName !== null);
     }
 
-    bindOnModelInitialize(callback: (beesCountByType: any, swarmCapacity: SwarmCapacity) => void) {
+    bindOnModelInitialize(callback: (storageState: StorageState) => void) {
         this.onModelInitialize = callback;
     }
 
@@ -82,7 +101,7 @@ export class GameModel {
 
     private checkSwarmHealth(targetBee: Bee, targetBeeIndex: number) {
         if (targetBee.hp <= 0) {
-            this.swarm.removeBee(targetBeeIndex);
+            this.swarm.removeBee(targetBee, targetBeeIndex);
             this.storageService.setState(this.buildStorageState());
 
             if (this.swarm.isTheQueenDead() || !this.swarm.getBees().length) {
@@ -98,7 +117,9 @@ export class GameModel {
         let storageState: StorageState = {
             playerName: this.playerName,
             bees: this.swarm.getBees(),
-            lastHit: this.lastHit
+            lastHit: this.lastHit,
+            swarmCount: this.swarm.getSwarmCount(),
+            swarmCapacity: this.swarm.getSwarmCapacity()
         };
         
         return storageState;

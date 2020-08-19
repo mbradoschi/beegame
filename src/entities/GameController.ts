@@ -1,6 +1,6 @@
 import { GameModel } from "./GameModel";
 import { GameView } from "./GameView";
-import { SwarmCapacity } from "../models/SwarmCapacity";
+import { StorageState } from "../models/StorageState";
 import { BeeType, Bee } from "../models/Bee";
 
 export class GameController {
@@ -14,6 +14,7 @@ export class GameController {
 
     initialize() {
         this.initActions();
+        this.onModelInitialize(this.model.getStorageState());
     }
 
     initActions() {
@@ -27,8 +28,8 @@ export class GameController {
         this.view.bindResetAction(this.handleResetAction);
     }
 
-    onModelInitialize = (beesCountByType: any, swarmCapacity: SwarmCapacity) => {
-        this.view.startGame(beesCountByType, swarmCapacity);
+    onModelInitialize = (storageState: StorageState) => {
+        this.view.initialize(storageState);
     }
 
     onModelChange = (beeType: BeeType) => {

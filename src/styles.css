@@ -1,24 +1,20 @@
+.intro,
 .player,
 #player-name-error,
 .game,
-.intro,
-.status-board,
-.notifications,
 .game-over,
-#reset,
-#hit {
+.notifications,
+#reset {
     display: none;
 }
 
+.intro.active,
 .player.active,
 #player-name-error.active,
 .game.active,
-.intro.active,
-.status-board.active,
-.notifications.active,
 .game-over.active,
-#reset.active,
-#hit.active {
+.notifications.active,
+#reset.active {
     display: block;
 }
 
