@@ -4,6 +4,7 @@ import { StorageState } from "../models/StorageState";
 export class GameView {
     private introElement: HTMLElement;
     private gameElement: HTMLElement;
+    private playerDetailsElement: HTMLElement;
     private statusBoardElement: HTMLElement;
     private notificationsElement: HTMLElement;
     private hitElement: HTMLElement;
@@ -13,6 +14,7 @@ export class GameView {
     constructor() {
         this.introElement = document.querySelector('.intro');
         this.gameElement = document.querySelector('.game');
+        this.playerDetailsElement = document.querySelector('.player');
         this.statusBoardElement = document.querySelector('.status-board');
         this.notificationsElement = document.querySelector('.notifications');
         this.hitElement = document.getElementById('hit');
@@ -66,7 +68,6 @@ export class GameView {
         this.gameOverElement.classList.add('active');
         this.resetElement.classList.add('active');
         this.hitElement.classList.remove('active');
-        this.statusBoardElement.classList.remove('active');
     }
 
     bindStartAction(handler: (playerName: string) => void) {
@@ -77,6 +78,7 @@ export class GameView {
 
             if (playerNameValue && playerNameValue.trim().length > 2) {
                 handler(playerNameValue);
+                (<HTMLInputElement>playerNameInput).value = null;
             } else {
                 const errorElement = document.getElementById('player-name-error');
                 errorElement.classList.add('active');
@@ -93,41 +95,42 @@ export class GameView {
     }
 
     private restoreGame(storageState: StorageState) {
+        this.introElement.classList.remove('active');
+
         const playerNameElement = document.getElementById('player-name');
         playerNameElement.textContent = storageState.playerName;
+        this.playerDetailsElement.classList.add('active');
 
-        const playerDetailsElement = document.querySelector('.player');
-        playerDetailsElement.classList.add('active');
+        this.buildStatusBoard(storageState);
 
-        this.introElement.classList.remove('active');
-        this.gameElement.classList.add('active');
-
-        const beeTypesElement = document.querySelector('.bee-types');
-        beeTypesElement.innerHTML = '';
-
-        if (!storageState.lastHit) {
-            this.notificationsElement.classList.remove('active');
+        if (storageState.lastHit !== null) {
+            this.updateNotifications(storageState.lastHit);
+            this.notificationsElement.classList.add('active');
         }
 
-        if (storageState.swarmCount[BeeType.QUEEN] === 0) {
-            this.endGame()
+        if (storageState.swarmCount[BeeType.QUEEN] <= 0) {
+            this.endGame();
         } else {
             this.gameOverElement.classList.remove('active');
+            this.hitElement.classList.add('active');
             this.resetElement.classList.remove('active');
         }
 
-        this.buildStatusBoard(beeTypesElement, storageState);
-
-        this.statusBoardElement.classList.add('active');        
-        this.hitElement.classList.add('active');
+        this.gameElement.classList.add('active');
     }
 
     private startGame() {
+        this.playerDetailsElement.classList.remove('active');
         this.gameElement.classList.remove('active');
+        this.gameOverElement.classList.remove('active');
+        this.notificationsElement.classList.remove('active');
+        this.resetElement.classList.remove('active');
         this.introElement.classList.add('active');
     }
 
-    private buildStatusBoard(beeTypesElement: Element, storageState: StorageState) {
+    private buildStatusBoard(storageState: StorageState) {
+        const beeTypesElement = document.querySelector('.bee-types');
+        beeTypesElement.innerHTML = '';
         const beeTypes = Object.values(BeeType);
 
         for (let i = 0; i < beeTypes.length; i++) {

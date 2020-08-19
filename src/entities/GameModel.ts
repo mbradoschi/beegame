@@ -30,18 +30,6 @@ export class GameModel {
     }
 
     initialize(playerName: string) {
-        // const persistedState = this.storageService.getState();
-
-        // if (!persistedState) {
-        //     this.playerName = playerName;
-        //     this.swarm.initialize();
-        //     // this.storageService.setState(this.buildStorageState());
-        // } else {
-        //     const { playerName, bees, lastHit } = persistedState;
-        //     this.playerName = playerName;
-        //     this.lastHit = lastHit;
-        //     this.swarm.setBees(bees);
-        // }
         this.playerName = playerName;
         this.storageService.setState(this.buildStorageState());
 
@@ -50,7 +38,10 @@ export class GameModel {
 
     reset() {
         this.storageService.removeState();
+        this.playerName = null;
+        this.lastHit = null;
         this.swarm.setBees([]);
+        this.swarm.resetSwarmCount();
         this.swarm.initialize();
         this.onModelInitialize(this.getStorageState());
     }
@@ -102,14 +93,13 @@ export class GameModel {
     private checkSwarmHealth(targetBee: Bee, targetBeeIndex: number) {
         if (targetBee.hp <= 0) {
             this.swarm.removeBee(targetBee, targetBeeIndex);
+            this.onModelChange(targetBee.type);
             this.storageService.setState(this.buildStorageState());
 
             if (this.swarm.isTheQueenDead() || !this.swarm.getBees().length) {
                 this.onDeadSwarm();
                 return;
             }
-
-            this.onModelChange(targetBee.type);
         }
     }
 

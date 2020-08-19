@@ -1,4 +1,5 @@
 import { StorageState } from "../models/StorageState";
+import { Bee, BeeType, Queen, WorkerBee, Drone } from "../models/Bee";
 
 export class StorageService {
     private readonly playerNameKey: string = 'playerName';
@@ -9,7 +10,8 @@ export class StorageService {
 
     getState(): StorageState {
         const playerName = localStorage.getItem(this.playerNameKey) || null;
-        const bees = JSON.parse(localStorage.getItem(this.beesKey)) || [];
+        const beesJson = JSON.parse(localStorage.getItem(this.beesKey));
+        const bees = beesJson ? this.deserializeJsonCollection(beesJson) : [];
         const lastHit = JSON.parse(localStorage.getItem(this.lastHitKey)) || null;
         const swarmCount = JSON.parse(localStorage.getItem(this.swarmCountKey)) || null;
         const swarmCapacity = JSON.parse(localStorage.getItem(this.swarmCapacityKey)) || null;
@@ -42,5 +44,27 @@ export class StorageService {
         localStorage.removeItem(this.lastHitKey);
         localStorage.removeItem(this.swarmCountKey);
         localStorage.removeItem(this.swarmCapacityKey);
+    }
+
+    private deserializeJsonCollection(collection: any[]): Bee[] {
+        return collection.map(item => {
+            let bee: Bee;
+
+            switch (item.type) {
+                case BeeType.QUEEN:
+                    bee = new Queen();
+                    break;
+                case BeeType.WORKER:
+                    bee = new WorkerBee();
+                    break;
+                case BeeType.DRONE:
+                    bee = new Drone();
+                    break;
+            }
+
+            bee.hp = item.hp;
+
+            return bee;
+        });
     }
 }

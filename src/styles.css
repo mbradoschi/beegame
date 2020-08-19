@@ -4,6 +4,7 @@
 .game,
 .game-over,
 .notifications,
+#hit,
 #reset {
     display: none;
 }
@@ -14,6 +15,7 @@
 .game.active,
 .game-over.active,
 .notifications.active,
+#hit.active,
 #reset.active {
     display: block;
 }

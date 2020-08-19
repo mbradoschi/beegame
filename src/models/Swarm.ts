@@ -42,12 +42,21 @@ export class Swarm {
         return this.swarmCount;
     }
 
+    resetSwarmCount() {
+        this.swarmCount = {
+            [BeeType.QUEEN]: 0,
+            [BeeType.WORKER]: 0,
+            [BeeType.DRONE]: 0
+        }
+    }
+
     getSwarmCapacity(): SwarmCapacity {
         return this.swarmCapacity;
     }
 
     public isTheQueenDead(): boolean {
-        return (this.getQueen() == null || this.getQueen().hp <= 0);
+        const queen = this.getQueen();
+        return (queen == null || queen.hp <= 0);
     }
 
     private getQueen(): Bee {
