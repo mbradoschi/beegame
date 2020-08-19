@@ -6,6 +6,6 @@
         "noImplicitAny": true,
         "sourceMap": true
     },
-    "include": ["src/**/*"],
+    "include": ["src/__tests__/*"],
     "exclude": ["node_modules", "webpack.*.js"]
 }

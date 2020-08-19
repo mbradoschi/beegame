@@ -5,7 +5,6 @@ export class GameView {
     private introElement: HTMLElement;
     private gameElement: HTMLElement;
     private playerDetailsElement: HTMLElement;
-    private statusBoardElement: HTMLElement;
     private notificationsElement: HTMLElement;
     private hitElement: HTMLElement;
     private resetElement: HTMLElement;
@@ -15,7 +14,6 @@ export class GameView {
         this.introElement = document.querySelector('.intro');
         this.gameElement = document.querySelector('.game');
         this.playerDetailsElement = document.querySelector('.player');
-        this.statusBoardElement = document.querySelector('.status-board');
         this.notificationsElement = document.querySelector('.notifications');
         this.hitElement = document.getElementById('hit');
         this.resetElement = document.getElementById('reset');
